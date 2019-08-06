@@ -1,0 +1,47 @@
+[list | stock_sample]  Import CSV - Sample Stock Tickers
+[list | ml_training_data]: Initialize Empty List (append sample pfolio stats)
+[DF | benchmark_returns] Import CSV to DataFrame -- SP500 Weekly Returns
+
+Generate ML Training Data
+    Start Loop (Max:100):
+        [Function | GenerateMLTrainingData]:
+            params: [list] stock tickers
+                    [DF | benchmark] SP500 Returns
+
+            1.  **Randomly Select Number of Stocks
+            2.  [list | stocks] Randomly Pick Stocks From Params
+            3.  [list | weights] Randomly Generate Portfolio Weights
+            4.  [DataFrame | portfolio] Closing Prices of All stocks
+                a.  Call closing_prices()
+                validation: Row Count() == ##
+                    conditional: False:
+                        Number of Stocks -1
+                        Continue
+                    conditional: True:
+                        Merge Closing Prices to DataFrame
+
+            #   Apply Weights Here:
+                -   Aggregate >> Sum
+                -   Regression Beta Calculation
+                -   Expected Portfolio Return Calculation
+                -   Expected Portfolio Variance Calculation
+
+            5.  [DataFrame | ortfolio Closing Prices >> Log Returns
+            6.  [float | RTNp] = round(np.sum(weights * portfolio.mean() * 250)), 4)
+            7.  [float | VARp] = round(np.sqrt(np.dot(weights.T, np.dot(log_returns.cov() * 250, weights))), 4)
+            8.  [float | Sharpe] = round(RTNp/VARp, 4)
+            7.  **Calculate Portfolio Regression Beta
+
+            10.  Backtest Portfolio Performance
+                 Start Loop [allocation]
+                    a.  Extract: Stock Ticker (Match DF Headers)
+                    b.  Extract: Stock Portfolio Weight
+                    c.  Apply Weight to Stock Ticker Column
+                    >>> portfolio[stock-ticker] = portfolio[stock-ticker].apply(lambda x: round(x * weight, 4))
+
+            11. Aggregate Portfolio Variables to Dictionary
+                [Dictionary | pfolio_stats] {RTNp, VARp, BETAp, Num, Sharpe}
+            12. Return pfolio_stats
+
+        **Append Each Function Ouput to ml_training_data list
+        >>> ml_training_data.append(ml_training_pfolio)
