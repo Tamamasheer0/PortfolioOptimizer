@@ -999,7 +999,7 @@ function renderChart() {
                 },
                 tooltips: {
                     mode: 'nearest',
-                    intersect: true,
+                    intersect: false,
                     xPadding: 10,
                     yPadding: 10,
                     displayColors: false,
@@ -1074,7 +1074,7 @@ function renderChart() {
         var spy = {
             id: 'spy',
             label: 'S&P 500',
-            borderWidth: 5,
+            borderWidth: 10,
             data: [{'x': 0.0742, 'y': 0.0724}],
             borderColor: rgbaColor('#ffd80a', 0.5),
             backgroundColor: rgbaColor('#ffd80a', 0.5)              
@@ -1082,7 +1082,7 @@ function renderChart() {
         var max = {
             id: 'max',
             label: 'Optimal Portfolio',
-            borderWidth: 5,
+            borderWidth: 10,
             data: [bestPfolio],
             borderColor: rgbaColor('#ffd80a', 0.5),
             backgroundColor: rgbaColor('#ffd80a', 0.5)              
@@ -1090,7 +1090,7 @@ function renderChart() {
         var min = {
             id: 'min',
             label: 'Minimum Variance Portfolio',
-            borderWidth: 5,
+            borderWidth: 10,
             data: [minvariancePfolio],
             borderColor: rgbaColor('#ffd80a', 0.5),
             backgroundColor: rgbaColor('#ffd80a', 0.5)              
