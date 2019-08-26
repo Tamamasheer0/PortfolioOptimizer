@@ -33,6 +33,7 @@
     <link href="assets/lib/datatables-bs4/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link href="assets/lib/datatables.net-responsive-bs4/responsive.bootstrap4.css" rel="stylesheet">
     <link href="assets/css/theme.css" rel="stylesheet">
+    <link href='assets/css/overlay.css' rel='stylesheet'>
 
   </head>
 
@@ -43,31 +44,41 @@
     <!--    Main Content-->
     <!-- ===============================================-->
     <main class="main" id="top">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card mb-3" style="height: 300px">
+            <div class="card-body rounded-soft bg-gradient">
+              <div class="row text-white align-items-center no-gutters">
+                <div class="col">
+                  <h4 class="text-white mb-0">Efficient Frontier</h4>
+                  <button class="btn" style='color: white; padding-bottom: 20px;' onclick='on()'>more info ></button>
+                </div>
+                <div class="col-auto d-none d-sm-block" style='padding-bottom: 22px;'>
+                  <label class="container"> Inefficient Portfolios
+                      <input type="checkbox" checked="checked" id='inefficient'>
+                      <span class="checkmark"></span>
+                  </label>
 
+                  <label class="container">Compare to S&P 500
+                    <input type="checkbox" id='spy'>
+                    <span class="checkmark"></span>
+                  </label>
 
-      <div class="container">
-            <div class="card mb-3" style="height: 300px">
-                    <div class="card-body rounded-soft bg-gradient">
-                      <div class="row text-white align-items-center no-gutters">
-                        <div class="col">
-                          <h4 class="text-white mb-0">Efficient Frontier</h4>
-                          <p class="fs--1 font-weight-semi-bold">Portfolio Stock Tickers<span class="text-300"></span></p>
-                        </div>
-                        <div class="col-auto d-none d-sm-block">
-                          <label class="container"> Inefficient Portfolios
-                              <input type="checkbox" checked="checked" id='inefficient'>
-                              <span class="checkmark"></span>
-                            </label>
+                </div>
+              </div>
+              <canvas class="rounded" id="scatterChart" width="1618" height="500"></canvas>
+              <div id='overlay' onclick='off()'>
+                <div id='text'>Efficient Frontier: the set of optimal portfolios that offer the highest expected return for a defined level of risk
+                  or the lowest risk for a given level of expected return<br><br>
+                  Sharpe Ratio: the measure of Return over Volatility (Risk-Adjusted Return)<br><br>
+                  Minimum Variance Portfolio: the portfolio with the lowest associated risk<br><br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-                          <label class="container">Compare to S&P 500
-                            <input type="checkbox" id='spy'>
-                            <span class="checkmark"></span>
-                          </label>
-                        </div>
-                      </div>
-                      <canvas class="rounded" id="scatterChart" width="1618" height="500"></canvas>
-                    </div>
-                  </div>
 
     <!-- ===============================================-->
     <!--    JavaScripts-->
@@ -89,5 +100,6 @@
     <script src="assets/lib/datatables.net-responsive-bs4/responsive.bootstrap4.js"></script>
     <script src="assets/js/theme.js"></script>
     <script src="assets/js/renderEF.js"></script>
+
   </body>
 </html>
