@@ -319,6 +319,41 @@ def closing_prices(stock):
     return price_data
 
 
+def standardized_historic_performance(ticker, verbose=True):
+    eod_close = closing_prices(stock=ticker).set_index("Date")
+    eod_close["std_close"] = round(eod_close[ticker] / eod_close[ticker].iloc[0], 4) - 1
+    if verbose:
+        print(eod_close.head())
+    return eod_close
+
+
+def calc_standardized_daily_close(daily_returns, verbose=True):
+    if type(daily_returns) is pd.coreseries.Series:
+        portfolio_start_value = 1
+        eod_portfolio_values = [(0, portfolio_start_value)]
+
+        for d, pct_return in daily_returns.items():
+            daily_open_value = eod_portfolio_values[-1][1]
+            daily_close_value = round(daily_open_value * (1 + pct_return), 6)
+            eod_portfolio_value.append((d, daily_close_value))
+            if verbose:
+                print(f'date: {d},\t'
+                      f'open: {daily_open_value},\t'
+                      f'%rtn: {round(pct_return, 6)}\t'
+                      f'close: {daily_close_value}')
+
+        portfolio_mkt_values = pd.DataFrame(
+            eod_portfolio_values[1:],
+            columns=["Date", "Mkt_Value"]
+        ).set_index("Date")
+        portfolio_mkt_values["std_close"] = portfolio_mkt_values["Mkt_Val"].apply(lambda x: x - 1)
+        return portfolio_mkt_values
+
+    else:
+        print("<Error> Incorrect Data Type: Req. Pandas Series")
+        return None
+
+
 def exp_portfolio_return(portfolio, weights):
     log_returns = np.log(portfolio / portfolio.shift(1)).iloc[1:]
     return round(np.sum(weights * log_returns.mean()) * 250, 4)
