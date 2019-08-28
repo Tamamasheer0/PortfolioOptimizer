@@ -8,11 +8,6 @@
 """
 import pandas as pd
 import numpy as np
-from flask import (
-    FLASK,
-    render_template,
-    jsonify
-)
 
 from PyFinance import (
     closing_prices,
@@ -27,12 +22,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 
-config = {
+db_config = {
     'user': 'root',
     'password': 'Tamamasheer0',
-    'connect': f'mysql://{config["user"]}:{config["password"]}@localhost/stock_data'
+    'mysql_db': 'mysql_db'
 }
-
+connect = f'mysql://{config["user"]}:{config["password"]}@{db_config["mysql_db"]}'
 
 '''##############################################################
     <Ben> Portfolio Optimizer (Scatter Chart Data)
