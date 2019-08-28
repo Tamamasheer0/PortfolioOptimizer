@@ -1076,9 +1076,11 @@ window.onload=function(){
                     }]
                 }       // Close Scales
             }           // Close Options
-        }              // Close configEF
+        };
+        
+        var scatter = new Chart(htmlEF, configEF);// Close configEF
 
-        var optimal = {
+var optimal = {
     id: 'optimal',
     borderWidth: 5,
     data: optimalPfolio,
