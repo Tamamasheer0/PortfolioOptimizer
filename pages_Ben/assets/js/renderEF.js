@@ -957,8 +957,8 @@ modPfolio = toMod.filter(function(value){
 });
 
 // RENDER CHART!
-function renderChart() {
-    var newChart = function newChart(chart, config) {
+function renderEF() {
+    function newChart(chart, config) {
         var ctx = chart.getContext('2d');
         return new window.Chart(ctx, config);
     };
@@ -1102,6 +1102,7 @@ function renderChart() {
                     return value.id != 'bad';
                 });
                 scatterChart.data.datasets = filtered;
+                console.log(scatterChart.data.datasets);
                 scatterChart.update();
             }
             else {
@@ -1127,10 +1128,10 @@ function renderChart() {
         });
     }
 }
-function off() {
-    document.getElementById('overlay').style.display = 'none';
+function off0() {
+    document.getElementById('overlay0').style.display = 'none';
 }
-function on() {
-    document.getElementById('overlay').style.display = 'block';
+function on0() {
+    document.getElementById('overlay0').style.display = 'block';
 }
-window.onload=renderChart();
+window.onload=renderEF();

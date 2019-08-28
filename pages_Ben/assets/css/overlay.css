@@ -1,4 +1,4 @@
-#overlay {
+.overlay {
   position: fixed; /* Sit on top of the page content */
   display: none; /* Hidden by default */
   width: 100%; /* Full width (cover the whole page) */
@@ -14,7 +14,7 @@
   opacity: 0.7;
 }
 
-#text{
+.text{
 position: absolute;
 top: 50%;
 left: 50%;
