@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/styles.css')}}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Chart.JS Library Ref -->
+    <script src="https://www.chartjs.org/dist/2.8.0/Chart.min.js"></script>
+
+    <title>Dashboard</title>
+  </head>
+
+  <body>
+    <!-- [Start] Side Navigation Bar -->
+    <div class="container-fluid p-1 mb-1 bg-secondary">
+      <div id="DashSideNav" class="SideNav bg-dark p-1 mb-1">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="container-fluid bg-secondary">
+          <h4 class="text-secondary bg-dark">Portfolio Builder</h4>
+          <input type="text" id="myInput" placeholder="Stock Ticker...">
+          <span onclick="newElement()" class="addBtn">Add</span>
+        </div>
+
+        <!-- Append Stock Tickers -->
+        <div class="container">
+          <ul id="myUL">
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- [Start] Portfolio Dashboard -->
+    <div id="dashboard" class="container-fluid bg-secondary p-1 mb-1">
+      <div class="row p-1 mb-1 bg-secondary">
+        <div class="col-lg-12">
+          <button class="btn btn-outline-light btn-md" onclick="openNav()">Portfolio</button>
+          <br /><hr>
+        </div>
+      </div>
+
+
+
+      <div class="row bg-dark p-1 mb-1">
+        <div class="col-lg-7">
+          <div class="card shadow p-1 mb-1 bg-dark h-100">
+            <div class="card-header bg-dark">
+              <div class="row align-items-center justify-content-between no-gutters">
+                <div class="col-6 d-flex align-items-center">
+                  <h5 class="text-light">Efficient Frontier</h5>
+                </div>
+
+                <div class="col-auto d-none d-sm-block">
+                <!-- Themed Dropdown Method
+                <select class="select select-md mb-3 shadow" id="dashboard-chart-select">
+                  <option value="all">All Portfolios</option>
+                  <option value="frontier" selected="selected">Efficient Frontier</option>
+                  <option value="spy">S&P 500</option>
+                </select>
+              -->
+                  <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Views</button>
+                    <div class="dropdown-menu bg-secondary text-light" aria-labelledby="dropdownMenuButton">
+                      <a class="dropdown-item text-light" href="#">Portfolios</a>
+                      <a class="dropdown-item text-light" href="#">Frontier</a>
+                      <a class="dropdown-item text-light" href="#">S&P 500</a>
+                      <a class="dropdown-item text-light" href="#">My Portfolio</a>
+                      <a class="dropdown-item text-light" href="#">Compare</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body rounded-soft bg-dark">
+              <div class="container-fluid bg-dark">
+                <canvas id="chart-efficient-frontier" class="rounded bg-dark"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card shadow p-1 mb-1 bg-dark rounded h-100">
+
+            <div class="card-header bg-dark">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-6 col-sm-auto d-flex align-items-center">
+                  <h5 class="fs-0 mb-0 text-nowrap text-light py-2 py-xl-0">Portfolio Performance</h5>
+                </div>
+                <div id="dashboard-actions">
+                  <button class="btn btn btn-outline-secondary btn-md">Toggle</button>
+                </div>  <!-- [Close] Radar-Chart - Button Group -->
+              </div>
+            </div>
+
+            <div class="card-body rounded-soft bg-dark">
+              <div class="container-fluid bg-secondary border-dark h-75">
+                <canvas id="chart-return" class="rounded bg-secondary"></canvas>
+              </div>
+              <br />
+              <div class="container-fluid bg-secondary border-dark h-25">
+                <canvas id="chart-voloatility" class="rounded bg-secondary"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row bg-dark p-0 mb-0 px-0 py-0">
+        <div class="col-lg-4">
+          <div class="card-shadow p-0 mb-0 bg-dark rounded h-100">
+            <!-- Row #3 Card #1: Header -->
+            <div class="card-header dark">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-6 col-sm-auto d-flex align-items-center">
+                  <h5 class="fs-0 mb-0 text-nowrap text-secondary py-2 py-xl-0">Portfolio Metrics</h5>
+                </div>
+                <div>
+                  <div class="col-6 col-sm-auto d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-md" onclick="addBenchmark()">S&P 500</button>
+                    <button class="btn btn-outline-secondary btn-md" onclick="resetRadar()">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body rounded-soft bg-dark">
+              <div class="container-fluid bg-secondary" style="opacity:25%">
+                <canvas id="chart-radar" class="rounded h-100"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card-shadow p-0 mb-0 bg-dark rounded h-100">
+            <!-- Row #3 Card #1: Header -->
+            <div class="card-header bg-dark">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-6 col-sm-auto d-flex align-items-center">
+                  <h5 class="fs-0 mb-0 text-nowrap text-secondary py-2 py-xl-0">Portfolio Metrics</h5>
+                </div>
+                <div>
+                  <div class="col-6 col-sm-auto d-flex align-items-center">
+                    <button class="btn btn-outline-secondary btn-md" onclick="addBenchmark()">S&P 500</button>
+                    <button class="btn btn-outline-secondary btn-md" onclick="resetRadar()">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body rounded-soft bg-dark">
+              <div class="container-fluid bg-secondary h-100">
+                <canvas id="chart-radar" class="rounded bg-secondary"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card-shadow p-0 mb-0 bg-dark border-dark rounded h-100">
+            <!-- Row #3 Card #1: Header -->
+            <div class="card-header bg-dark">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-6 col-sm-auto d-flex align-items-center">
+                  <h5 class="fs-0 mb-0 text-nowrap text-secondary py-2 py-xl-0">Portfolio Correlation Matrix</h5>
+                </div>
+                <div>
+                  <!-- Button Group
+                  <div class="col-6 col-sm-auto d-flex align-items-center pr-0">
+                    <button class="btn btn-outline-info btn-md" onclick="addBenchmark()">S&P 500</button>
+                    <button class="btn btn-outline-info btn-md" onclick="resetRadar()">Reset</button>
+                  </div>
+                  -->
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body rounded-soft bg-dark">
+              <div class="container-fluid bg-secondary h-100">
+                <canvas id="chart-radar" class="rounded bg-secondary"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+    <!-- Custom JavaScript Files -->
+    <script src="{{ url_for('static', filename='js/dash-tools.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dash-chart-metrics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dash-chart-EF2.js') }}"></script>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>

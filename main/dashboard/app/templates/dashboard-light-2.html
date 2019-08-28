@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="../static/css/styles.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Chart.JS Library Ref -->
+    <script src="https://www.chartjs.org/dist/2.8.0/Chart.min.js"></script>
+
+    <title>Dashboard</title>
+  </head>
+
+  <body>
+    <!-- [Start] Side Navigation Bar -->
+    <div id="DashSideNav" class="SideNav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <div class="container-fluid">
+        <h4 style="margin:5px; color:gray">Portfolio Builder</h4>
+        <input type="text" id="myInput" placeholder="Stock Ticker...">
+        <span onclick="newElement()" class="addBtn">Add</span>
+      </div>
+      <br /><hr class="my-4">
+
+      <!-- Append Stock Tickers -->
+      <div class="container">
+        <ul id="myUL">
+        </ul>
+      </div>
+    </div>
+    <!-- [End] Side Navigation Bar -->
+
+    <!-- [Start] Portfolio Dashboard -->
+    <div id="dashboard" class="container-fluid bg-white">
+      <!-- Dashboard Row #1 - Psuedo NavBar -->
+      <div class="row mb-0 mt-0">
+        <div class="col-lg-7">
+          <button class="btn btn-outline-info btn-sm" onclick="openNav()">Portfolio</button>
+          <br />
+          <hr>
+        </div>
+      </div>
+
+      <div class="row bg-white">
+        <!-- [Chart] Card Group #1 - Main Chart & Radar Chart -->
+        <!--<div class="card-group">-->
+        <div class="col-lg-7 w-auto">
+          <!-- <div class="container"> -->
+          <div class="card shadow p-3 mb-5 bg-white info rounded">
+            <div class="row align-items-center justify-content-between no-gutters">
+              <!-- Header Item #1 -- Label -->
+
+              <h5 class="text-info">Efficient Frontier</h5>
+
+
+                <!-- Main Chart - Drop Down Select Menu -->
+
+                  <!-- Themed Dropdown Method
+                  <select class="select select-md mb-3 shadow" id="dashboard-chart-select">
+                    <option value="all">All Portfolios</option>
+                    <option value="frontier" selected="selected">Efficient Frontier</option>
+                    <option value="spy">S&P 500</option>
+                  </select>
+                -->
+
+              <div class="dropdown">
+                <button class="btn btn-outline-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Views</button>
+                <div class="dropdown-menu bg-white text-info" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item text-info" href="#">Portfolios</a>
+                  <a class="dropdown-item text-info" href="#">Frontier</a>
+                  <a class="dropdown-item text-info" href="#">S&P 500</a>
+                  <a class="dropdown-item text-info" href="#">My Portfolio</a>
+                  <a class="dropdown-item text-info" href="#">Compare</a>
+                </div>
+              </div><!-- [Close] Drop-Down Menu -->
+            </div>
+
+            <div class="row w-auto">
+              <div class="col-7 w-auto">
+                <div class="card-body rounded-soft bg-gradient">
+                  <canvas id="chart-efficient-frontier" class="rounded bg-gradient"></canvas>
+                </div>
+              </div>
+            </div>        <!-- Close Row -->
+          </div>          <!-- Close Card 1 -->
+        </div>            <!-- Close Column-7 -->
+
+        <!-- Dashboard Chart #2 -->
+        <div class="col-5 w-auto">
+          <div class="card shadow p-3 mb-5 bg-white rounded">
+            <div class="row align-items-center justify-content-between mb-0">
+              <div class="col-5 col-sm-auto d-flex align-items-center pr-0">
+                <h5 class="fs-0 mb-0 text-nowrap text-info py-2 py-xl-0">Metrics</h5>
+              </div>
+
+
+              <!-- Header Item #2 - Button Group -->
+              <div id="dashboard-actions">
+                <button class="btn btn-outline-info btn-md" onclick="addBenchmark()">S&P 500</button>
+                <button class="btn btn-outline-info btn-md" onclick="resetRadar()">Reset</button>
+                    <!--
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-plus" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Add</span></button>
+                    <button class="btn btn-falcon-default btn-sm mx-2" type="button"><span class="fas fa-filter" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Filter</span></button>
+                    <button class="btn btn-falcon-default btn-sm" type="button"><span class="fas fa-external-link-alt" data-fa-transform="shrink-3 down-2"></span><span class="d-none d-sm-inline-block ml-1">Export</span></button>
+                  -->
+              </div>  <!-- [Close] Radar-Chart - Button Group -->
+            </div>
+            <div class="row w-auto">
+              <div class="col">
+                <div class="card-body rounded-soft bg-white">
+                  <canvas id="chart-radar" class="rounded"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row #3 - Portfolio Sub Plot Visuals (Volatility Attribution) -->
+      <div class="row w-auto">
+
+
+      <!--[Start] Row #3 Chart Group -->
+        <!-- Row #3: Sub Plot-1 -->
+        <div class="col-4 w-auto">
+          <div class="card shadow p-3 mb-5 bg-white border-white rounded h-300 w-auto">
+
+            <h6 class="text-info">Sub Plot-1</h6>
+
+
+
+            <div class="card-body rounded-soft bg-gradient">
+              <!--
+              <canvas id="chart-radar" class="rounded"></canvas>
+              -->
+              <canvas id="place-holder rounded-soft bg-gradient"></canvas>
+            </div>      <!-- [Close] Volatility Chart Canvas -->
+          </div>        <!-- [Close] Volatility Card Body -->
+        </div>
+
+          <!-- Row #3: Sub Plot-2 -->
+        <div class="col-4">
+          <div class="card shadow p-3 mb-5 bg-white rounded h-400 w-auto">
+
+            <h6 class="text-info">Sub Plot-2</h6>
+
+
+            <div class="card-body rounded-soft bg-gradient">
+              <canvas id="chart-subplot-2" class="rounded"></canvas>
+            </div>      <!-- [Close] Canvas Sub-Plot-2 -->
+          </div>        <!-- [Close] Card Sub-Plot-2 -->
+        </div>
+
+        <!-- Row #3: Sub Plot-3 -->
+        <div class="col-4">
+          <div class="card shadow p-3 mb-5 bg-white rounded h-400 w-auto">
+
+            <h6 class="text-info">Sub Plot-3</h6>
+
+
+            <div class="card-body rounded-soft bg-gradient">
+              <canvas id="chart-subplot-3" class="rounded"></canvas>
+            </div>      <!-- [Close] Canvas Sub Plot-3 -->
+          </div>        <!-- [Close] Card Sub-Plot-3 -->
+        </div>
+        <!-- End of Chart Group -->
+        </div>          <!-- [Close] Column-12 Tag -->
+      </div>            <!-- [Close] Row #3 Tag -->
+    <!-- [End] Row #3: Sub Plots-->
+
+
+
+
+
+    <!-- Custom JavaScript Files -->
+    <script src="../static/js/dash-tools.js"></script>
+    <script src="../static/js/dash-chart-metrics.js"></script>
+    <!--
+    <script src="../static/js/dash-chart-EF2.js"></script>
+      -->
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
