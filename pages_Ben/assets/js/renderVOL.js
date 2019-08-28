@@ -25,43 +25,60 @@ var colorsLine = ['#00d97e', '#f6c343', '#39afd1', '#e63757'];
 var colorsBar = ['#00d97e','#ffd80a','#dc143c'];
 
 var labels = [0,1,2,3,4];
+var tickers = ['AMZN','GOOG','FB']
 var data0 = [1,-1,2,0,1];
 var data1 = [0,-2,2,1,2];
 var data2 = [2,-2,1,2,2];
-var data_combo = [];
-for (i = 0; i < data1.length; i++) {
-    let value = data0[i] + data1[i] + data2[i];
-    data_combo.push(value);
-}
+var dataPfolio = [1,-1,1,-1,1];
 
-class dataset {
+class volDataset {
     constructor(data, number, id, dash) {
         this.borderWidth = 2;
         this.data = data;
         this.borderColor = rgbaColor(colorsLine[number], 0.8),
         this.backgroundColor = rgbaColor(colorsLine[number], 0.15);
         this.number = number;
-        this.id = `${id}`;
         this.fill = false;
         this.borderDash = dash;
-        this.label = `data${id}`;
+        this.label = `${id}`;
         this.type = 'line';
     }
 }
 
-var dataset0 = new dataset(data0, 0, 0, [5,5]);
-var dataset1 = new dataset(data1, 1, 1, [5,5]);
-var dataset2 = new dataset(data2, 2, 2, [5,5]);
-var dataset_combo = new dataset(data_combo, 3, '_combined', []);
+var dataset0 = new volDataset(data0, 0, tickers[0], [5,5]);
+var dataset1 = new volDataset(data1, 1, tickers[1], [5,5]);
+var dataset2 = new volDataset(data2, 2, tickers[2], [5,5]);
+var datasetPfolio = new volDataset(dataPfolio, 3, 'Optimized Portfolio', []);
 
 var data_bar = 0;
 var data_bar_neg = data_bar*-1;
 
-function updateBar(datasetsBar) {
-    console.log(data_bar);
-    datasetsBar[0].data[0] = data_bar;
-    datasetsBar[1].data[0] = data_bar*-1;
+// -----
+var _data0 = [1,2,4,3,5];
+var _data1 = [0,1,3,2,4];
+var _data2 = [0,2,3,4,5];
+var _dataPfolio = [1,2,3,5,6];
+
+class rtnDataset {
+    constructor(data, number, id, dash) {
+        this.borderWidth = 2;
+        this.data = data;
+        this.borderColor = rgbaColor(colorsLine[number], 0.8),
+        this.backgroundColor = rgbaColor(colorsLine[number], 0.15);
+        this.number = number;
+        this.fill = false;
+        this.borderDash = dash;
+        this.label = `${id}`;
+        this.type = 'line';
+    }
 }
+
+var _dataset0 = new rtnDataset(_data0, 0, tickers[0], [5,5]);
+var _dataset1 = new rtnDataset(_data1, 1, tickers[1], [5,5]);
+var _dataset2 = new rtnDataset(_data2, 2, tickers[2], [5,5]);
+var _datasetPfolio = new rtnDataset(_dataPfolio, 3, 'Optimized Portfolio', []);
+
+// -----
 
 var hexToRgb = function hexToRgb(hexValue) {
     var hex;
@@ -85,7 +102,6 @@ var rgbaColor = function rgbaColor(color, alpha) {
 };
 
 function colorBar(data) {
-    console.log(data);
     if (data <= 1.3) {
         return colorsBar[0];
     }
@@ -97,15 +113,19 @@ function colorBar(data) {
     }
 }
 
+// -----
+
 function renderVOL() {
+    var vol = document.getElementById('vol');
+
     function newChart(chart, config) {
         var ctx = chart.getContext('2d');
         return new window.Chart(ctx, config);
     };
 
-    var chartLine = document.getElementById('lineVOL');
+    var chartLine = document.getElementById('volChart');
 
-    var lineVOL = newChart(chartLine, {
+    var volChart = newChart(chartLine, {
         type: 'bar',
         data: {
             labels: labels,
@@ -113,7 +133,7 @@ function renderVOL() {
                 dataset0,
                 dataset1,
                 dataset2,
-                dataset_combo,
+                datasetPfolio,
                 {backgroundColor: rgbaColor(colorBar(data_bar),0.3),
                 borderWidth: 2,
                 data: [data_bar,data_bar,data_bar,data_bar,data_bar,],
@@ -131,54 +151,13 @@ function renderVOL() {
             elements: {
                 line: {
                     tension: 0
+                },
+                point: {
+                    radius: 0
                 }
             },
             legend: {
-                display: true,
-                labels: {
-                    fontColor: rgbaColor('#fff', 0.7),
-                    fontStyle: 600,
-                    padding: 20
-                },
-                onClick: 
-                    function(e, legendItem) {
-                        let indexes = [0,1,2,3];
-                        var ci = this.chart;
-                        var index = legendItem.datasetIndex;
-                        let filtered = indexes.filter(function(value){
-                            return value != index;
-                        });
-                        let line = ci.data.datasets;
-                        if (line[index].borderColor == rgbaColor(colorsLine[line[index].number], 0.15)) {
-                            for (value in indexes) {
-                                line[value].borderColor = rgbaColor(colorsLine[line[value].number], 0.8);
-                            }
-                        }
-                        for (value in filtered) {
-                            if (line[filtered[value]].borderColor != rgbaColor(colorsLine[line[filtered[value]].number], 0.15)) {
-                                line[filtered[value]].borderColor = rgbaColor(colorsLine[line[filtered[value]].number], 0.15);
-                            }
-                            else {
-                                line[filtered[value]].borderColor = rgbaColor(colorsLine[line[filtered[value]].number], 0.8);
-                            }
-                        }
-                        
-                        let std = [];
-                        for(key in ci.data.datasets[index].data){
-                            std.push(ci.data.datasets[index].data[key]);
-                        }
-                        data_bar = standardDeviation(std);
-                        data_bar_neg = data_bar*-1;
-                        console.log(data_bar_neg);
-                        for (data in line[value].data) {
-                            line[4].data[data] = data_bar;
-                            line[5].data[data] = data_bar_neg;
-                        }
-                        line[4].backgroundColor = rgbaColor(colorBar(data_bar),0.5);
-                        line[5].backgroundColor = rgbaColor(colorBar(data_bar),0.5);
-
-                        ci.update();
-                    }
+                display: false
             },
             hover: {
                 mode: null
@@ -196,16 +175,14 @@ function renderVOL() {
                         labelString: 'Month'
                     },
                     ticks: {
-                    fontColor: rgbaColor('#fff', 0.7),
-                    fontStyle: 600
+                        fontColor: rgbaColor('#fff', 0.7),
+                        fontStyle: 600
                     },
                     gridLines: {
-                    color: rgbaColor('#fff', 0.1),
-                    lineWidth: 1
+                        display: false
                     }
                 }],
                 yAxes: [{
-                    stacked: true,
                     display: true,
                     ticks: {
                         maxTicksLimit: 5,
@@ -216,7 +193,131 @@ function renderVOL() {
             }
         }
     });
-    
+
+// -----
+
+    var rtn = document.getElementById('rtn');
+
+    function newChart(chart, config) {
+        var ctx = chart.getContext('2d');
+        return new window.Chart(ctx, config);
+    };
+
+    var chartLine = document.getElementById('rtnChart');
+
+    var rtnChart = newChart(chartLine, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                _dataset0,
+                _dataset1,
+                _dataset2,
+                _datasetPfolio,
+            ]
+        },
+        options: {
+            elements: {
+                line: {
+                    tension: 0.4
+                }
+            },
+            legend: {
+                display: true,
+                labels: {
+                    fontColor: rgbaColor('#fff', 0.7),
+                    fontStyle: 600,
+                    padding: 20
+                },
+                onClick: 
+                    function(e, legendItem) {
+                        let indexes = [0,1,2,3];
+                        var ci = this.chart;
+                        var index = legendItem.datasetIndex;
+                        let filtered = indexes.filter(function(value){
+                            return value != index;
+                        });
+                        let line0 = ci.data.datasets;
+                        let line1 = volChart.chart.data.datasets;
+                        if (line0[index].borderColor == rgbaColor(colorsLine[line0[index].number], 0.15)) {
+                            for (value in indexes) {
+                                line0[value].borderColor = rgbaColor(colorsLine[line0[value].number], 0.8);
+                                line1[value].borderColor = rgbaColor(colorsLine[line1[value].number], 0.8);
+                                
+                            }
+                        }
+                        for (value in filtered) {
+                            if (line0[filtered[value]].borderColor != rgbaColor(colorsLine[line0[filtered[value]].number], 0.15)) {
+                                line0[filtered[value]].borderColor = rgbaColor(colorsLine[line0[filtered[value]].number], 0.15);
+                                line1[filtered[value]].borderColor = rgbaColor(colorsLine[line1[filtered[value]].number], 0.15);
+                            }
+                            else {
+                                line0[filtered[value]].borderColor = rgbaColor(colorsLine[line0[filtered[value]].number], 0.8);
+                                line1[filtered[value]].borderColor = rgbaColor(colorsLine[line1[filtered[value]].number], 0.8);
+                            }
+                        }
+
+                        let std = [];
+                        for(key in line1[index].data){
+                            std.push((line1[index].data[key]));
+                        }
+                        data_bar = standardDeviation(std);
+                        data_bar_neg = data_bar*-1;
+                        for (data in line0[value].data) {
+                            line1[4].data[data] = data_bar;
+                            line1[5].data[data] = data_bar_neg;
+                        }
+                        line1[4].backgroundColor = rgbaColor(colorBar(data_bar),0.4);
+                        line1[5].backgroundColor = rgbaColor(colorBar(data_bar),0.4);
+
+                        var copy = Array.from(line0[index].data);
+                        var exp = copy.pop();
+
+                        vol.innerHTML = 'Standard Deviation: ' + Math.round(data_bar*100)/100;
+                        rtn.innerHTML = 'Expected Return: $' + exp;
+
+                        ci.update();
+                        volChart.chart.update();
+                    }
+            },
+            hover: {
+                mode: null
+            },
+            tooltips: {
+                enabled: false
+            },
+            scales: {
+                xAxes: [{
+                    scaleLabel: {
+                        show: true,
+                        labelString: 'Month'
+                    },
+                    ticks: {
+                    fontColor: rgbaColor('#fff', 0.7),
+                    fontStyle: 600
+                    },
+                    gridLines: {
+                    color: rgbaColor('#fff', 0.1),
+                    lineWidth: 1
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        maxTicksLimit: 5,
+                        fontColor: rgbaColor('#fff', 0.7),
+                        fontStyle: 600
+                    },
+                }]
+            }
+        }
+    });
 }
 
 window.onload=renderVOL();
+function off1() {
+    document.getElementById('overlay1').style.display = 'none';
+}
+function on1() {
+    document.getElementById('overlay1').style.display = 'block';
+}

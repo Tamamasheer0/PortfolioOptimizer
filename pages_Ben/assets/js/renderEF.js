@@ -1128,10 +1128,10 @@ function renderEF() {
         });
     }
 }
-function off() {
-    document.getElementById('overlay').style.display = 'none';
+function off0() {
+    document.getElementById('overlay0').style.display = 'none';
 }
-function on() {
-    document.getElementById('overlay').style.display = 'block';
+function on0() {
+    document.getElementById('overlay0').style.display = 'block';
 }
 window.onload=renderEF();
