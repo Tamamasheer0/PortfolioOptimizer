@@ -2,6 +2,7 @@
 import os
 import pandas as pd
 import pymysql
+import random
 
 from flask import (
     Flask,
@@ -10,16 +11,32 @@ from flask import (
     request,
     redirect)
 
+from sqlalchemy import create_engine
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+
+db_config = {
+    'user': 'root',
+    'password': 'Tamamasheer0',
+    'mysql_db': 'localhost/stock_data'
+}
+mysql_connect = f'mysql://{db_config["user"]}:{db_config["password"]}@{db_config["mysql_db"]}'
+
+
 from app.pkg import dbsetup, queries
 from app.form import stock_choices
 from app import app
 from app.config import Config
 
 #   Import Custom Flask Routes >> FlaskRoutes.py
-from app.pkg.DBRoutes import *
+from app.pkg.DBRoutes import (
+    generate_random_portfolio,
+    efficient_frontier_data
+)
 
-print("\n\tInitializing Flask App >> Portfolio Optimization Dashboard\n\n", flush=True)
 
+print("\n\tInitializing Flask App\n\t>> Portfolio Optimization Dashboard\n\n", flush=True)
+print(f'\n\tMySQL Database Connection:\n\t>>> {mysql_connect}\n')
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -37,6 +54,14 @@ def home():
 def DashboardLight():
   print("\n<Route> Render: Dashboard - Light")
   return render_template("dashboard-light-2.html")
+
+
+@app.route("/defChartEF")
+def mysql_query_efficient_frontier(db_conn=mysql_connect):
+  print(f'\n<Flask Query> Run Query: Efficient Frontier Data\n', flush=True)
+  portfolio_assets = generate_random_portfolio()
+  query_data = efficient_frontier_data(portfolio_assets, db_conn)
+  return jsonify(query_data)
 
 
 @app.route('/Closing_Prices', methods=['POST', 'GET'])

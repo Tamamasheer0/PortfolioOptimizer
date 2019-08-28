@@ -23,6 +23,7 @@ import datetime as dt
 import pandas as pd
 import numpy as np
 import quandl as ql
+import random
 from apiconfig import quandl_api_key
 
 

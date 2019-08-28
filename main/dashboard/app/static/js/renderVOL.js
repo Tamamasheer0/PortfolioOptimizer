@@ -1,18 +1,18 @@
 function standardDeviation(values){
     var avg = average(values);
-
+    
     var squareDiffs = values.map(function(value){
       var diff = value - avg;
       var sqrDiff = diff * diff;
       return sqrDiff;
     });
-
+    
     var avgSquareDiff = average(squareDiffs);
-
+  
     var stdDev = Math.sqrt(avgSquareDiff);
     return stdDev;
   }
-
+  
 function average(data){
     var sum = data.reduce(function(sum, value){
         return sum + value;
@@ -229,7 +229,7 @@ function renderVOL() {
                     fontStyle: 600,
                     padding: 20
                 },
-                onClick:
+                onClick: 
                     function(e, legendItem) {
                         let indexes = [0,1,2,3];
                         var ci = this.chart;
@@ -243,7 +243,7 @@ function renderVOL() {
                             for (value in indexes) {
                                 line0[value].borderColor = rgbaColor(colorsLine[line0[value].number], 0.8);
                                 line1[value].borderColor = rgbaColor(colorsLine[line1[value].number], 0.8);
-
+                                
                             }
                         }
                         for (value in filtered) {
@@ -314,18 +314,7 @@ function renderVOL() {
     });
 }
 
-var linkedData = []
-
-window.onload = function(){
-    var defaultURL = "/defaultVol"
-    d3.json(defaultURL).then(function(data){
-    console.log("[Flask Route | JavaScript] Query Volatility Data")
-    console.log(data)
-
-});
-    renderVOL();
-}
-
+window.onload=renderVOL();
 function off1() {
     document.getElementById('overlay1').style.display = 'none';
 }

@@ -1,6 +1,6 @@
-console.log("<JavaScript | Charts> Scatter-Chart: Import Fn >> Successful")
+console.log("**Updated** <JavaScript | Charts> Scatter-Chart: Import Fn >> Successful")
 
-
+/*
 var scatterData = [{'x': 0.1632, 'y': 0.1569, 'z': 100}, {'x': 0.1592, 'y': 0.1369}, {'x': 0.1548, 'y': 0.1336}, {'x': 0.147, 'y': 0.13}, {'x': 0.1464, 'y': 0.128}, {'x': 0.1445, 'y':
 0.1245}, {'x': 0.1476, 'y': 0.1242}, {'x': 0.1483, 'y': 0.1241}, {'x': 0.1657, 'y': 0.1262}, {'x': 0.1605, 'y': 0.1237}, {'x': 0.1438, 'y': 0.1173}, {'x':
 0.1469, 'y': 0.1174}, {'x': 0.1519, 'y': 0.1172}, {'x': 0.1492, 'y': 0.1167}, {'x': 0.1444, 'y': 0.1157}, {'x': 0.1491, 'y': 0.1163}, {'x': 0.143, 'y': 0.1142},
@@ -883,6 +883,7 @@ var scatterData = [{'x': 0.1632, 'y': 0.1569, 'z': 100}, {'x': 0.1592, 'y': 0.13
                   [ChartJS] Radar Chart - Portfolio Metrics
 ############################################################################*/
 
+
 var hexToRgb = function hexToRgb(hexValue) {
     var hex;
     hexValue.indexOf('#') === 0 ? hex = hexValue.substring(1) : hex = hexValue; // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -918,8 +919,9 @@ function compare(a,b) {
     }
     return comparison;
 }
-var scatterDataSorted = scatterData;
-scatterDataSorted.sort(compare);
+
+var scatterData = [];
+var scatterDataSorted = [];
 var optimalPfolio = [];
 var unoptimalPfolio = [];
 var badPfolio = [];
@@ -928,138 +930,155 @@ var modPfolio = [];
 var minvariancePfolio = {};
 var bestPfolio = {};
 var y = 0;
-for (dict in scatterDataSorted) {
-    if (scatterDataSorted[dict].y > y) {
-        y = scatterDataSorted[dict].y;
-        optimalPfolio.push(scatterDataSorted[dict]);
-    }
-    else {
-        unoptimalPfolio.push(scatterDataSorted[dict]);
-    }
-}
-var y = 1;
-for (dict in unoptimalPfolio) {
-    if (unoptimalPfolio[dict].y < y) {
-        y = unoptimalPfolio[dict].y;
-        terriblePfolio.push(unoptimalPfolio[dict]);
-    }
-    else {
-        badPfolio.push(unoptimalPfolio[dict]);
-    }
-}
-var z = 0;
-var x = 1;
-for (dict in optimalPfolio) {
-    optimalPfolio[dict].z = optimalPfolio[dict].y/optimalPfolio[dict].x;
-    if (optimalPfolio[dict].z > z) {
-        bestPfolio = optimalPfolio[dict];
-        z = optimalPfolio[dict].z;
-    }
-    if  (optimalPfolio[dict].x < x) {
-        minvariancePfolio = optimalPfolio[dict];
-        x = optimalPfolio[dict].x;
-    }
-}
-var toMod = Array.from(optimalPfolio);
-toMod.shift();
-modPfolio = toMod.filter(function(value){
-    return value != bestPfolio;
-});
 
 
-//  Render Chart
+window.onload=function(){
+    var defaultURL = "/defChartEF"
+    d3.json(defaultURL).then(function(data){
+        console.log(data.EF)
+        data.EF.forEach(function(d){
+            console.log(d)
+            scatterData.push(d)
+        });
+        console.log("[Flask Route | JavaScript] Query Efficient Frontier Data")
+        console.log(scatterData)
 
-var color = Chart.helpers.color;
-var htmlEF = document.getElementById("chart-efficient-frontier")
-var configEF = {
-    type:"scatter",
-    data: {
-        datasets: [
-            {
-            id: 'terrible',
-            borderWidth: 5,
-            data: terriblePfolio,
-            borderColor: rgbaColor('#dc143c', 0.5),
-            backgroundColor: rgbaColor('#dc143c', 0.5)
-            },
-            {
-            id: 'optimal',
-            borderWidth: 5,
-            data: optimalPfolio,
-            borderColor: rgbaColor('#00d97e', 0.5),
-            backgroundColor: rgbaColor('#00d97e', 0.5)
-            },
-            {
-            id: 'bad',
-            data: badPfolio,
-            //borderColor: rgbaColor('#FFF', .15),
-            backgroundColor: rgbaColor('#2E2EEA', 0.3)
+        scatterDataSorted = scatterData;
+        scatterDataSorted.sort(compare);
+
+        for (dict in scatterDataSorted) {
+            if (scatterDataSorted[dict].y > y) {
+                y = scatterDataSorted[dict].y;
+                optimalPfolio.push(scatterDataSorted[dict]);
             }
-        ]
-    },
-    options: {
-        events:['click'],
-        legend: {
-            display: false
-        },
-        tooltips: {
-            mode: 'nearest',
-            intersect: false,
-            xPadding: 10,
-            yPadding: 10,
-            displayColors: false,
-            callbacks: {
-                label: function label(tooltipItem) {
-                    var sharpe = tooltipItem.yLabel/tooltipItem.xLabel;
-                    return 'Sharpe ratio: ' + (Math.round(sharpe * 100))/100;
-                },
-                title: function title(tooltipItem, data) {
-                    return data.datasets[tooltipItem[0].datasetIndex].label;
-                }
+            else {
+                unoptimalPfolio.push(scatterDataSorted[dict]);
             }
-        },
-        scales: {
-            xAxes: [{
-                scaleLabel: {
-                    show: true,
-                    display:true,
-                    labelString: 'Volatility',
-                    fontColor: rgbaColor('#4899b1', 0.7),
-                    fontStyle: 600
-                },
-                ticks: {
-                    fontColor: rgbaColor('#4899b1', 0.7),
-                    fontStyle: 600
-                },
-                gridLines: {
-                    color: rgbaColor('#4899b1', 0.1),
-                    lineWidth: 1
-                }
-            }],
-            yAxes: [{
-                scaleLabel: {
-                show: true,
-                display: true,
-                labelString: 'Return',
-                fontColor: rgbaColor('#4899b1', 0.7),
-                fontStyle: 600
-                },
-                ticks: {
-                    fontColor: rgbaColor('#4899b1', 0.7),
-                    fontStyle: 600
-                },
-                gridLines: {
-                    color: rgbaColor('#367385', 0.1),
-                    lineWidth: 1
-                }
-            }]
-        }       // Close Scales
-    }           // Close Options
-};              // Close configEF
+        }
+        var y = 1;
+        for (dict in unoptimalPfolio) {
+            if (unoptimalPfolio[dict].y < y) {
+                y = unoptimalPfolio[dict].y;
+                terriblePfolio.push(unoptimalPfolio[dict]);
+            }
+            else {
+                badPfolio.push(unoptimalPfolio[dict]);
+            }
+        }
+        var z = 0;
+        var x = 1;
+        for (dict in optimalPfolio) {
+            optimalPfolio[dict].z = optimalPfolio[dict].y/optimalPfolio[dict].x;
+            if (optimalPfolio[dict].z > z) {
+                bestPfolio = optimalPfolio[dict];
+                z = optimalPfolio[dict].z;
+            }
+            if  (optimalPfolio[dict].x < x) {
+                minvariancePfolio = optimalPfolio[dict];
+                x = optimalPfolio[dict].x;
+            }
+        }
 
-var chartEF = new Chart(htmlEF, configEF)
 
-var optimal = {
+
+        var toMod = Array.from(optimalPfolio)
+        toMod.shift();
+        modPfolio = toMod.filter(function(value){
+            return value != bestPfolio;
+        })
+
+
+        //  Render Chart
+
+        var color = Chart.helpers.color
+
+        var htmlEF = document.getElementById("chart-efficient-frontier")
+        var configEF = {
+            type:"scatter",
+            data: {
+                datasets: [
+                    {
+                    id: 'terrible',
+                    borderWidth: 5,
+                    data: terriblePfolio,
+                    borderColor: rgbaColor('#dc143c', 0.5),
+                    backgroundColor: rgbaColor('#dc143c', 0.5)
+                    },
+                    {
+                    id: 'optimal',
+                    borderWidth: 5,
+                    data: optimalPfolio,
+                    borderColor: rgbaColor('#00d97e', 0.5),
+                    backgroundColor: rgbaColor('#00d97e', 0.5)
+                    },
+                    {
+                    id: 'bad',
+                    data: badPfolio,
+                    //borderColor: rgbaColor('#FFF', .15),
+                    backgroundColor: rgbaColor('#2E2EEA', 0.3)
+                    }
+                ]},
+            options: {
+                events:['click'],
+                legend: {
+                    display: false
+                },
+                tooltips: {
+                    mode: 'nearest',
+                    intersect: false,
+                    xPadding: 10,
+                    yPadding: 10,
+                    displayColors: false,
+                    callbacks: {
+                        label: function label(tooltipItem) {
+                            var sharpe = tooltipItem.yLabel/tooltipItem.xLabel;
+                            return 'Sharpe ratio: ' + (Math.round(sharpe * 100))/100;
+                        },
+                        title: function title(tooltipItem, data) {
+                            return data.datasets[tooltipItem[0].datasetIndex].label;
+                        }
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            show: true,
+                            display:true,
+                            labelString: 'Volatility',
+                            fontColor: rgbaColor('#4899b1', 0.7),
+                            fontStyle: 600
+                        },
+                        ticks: {
+                            fontColor: rgbaColor('#4899b1', 0.7),
+                            fontStyle: 600
+                        },
+                        gridLines: {
+                            color: rgbaColor('#4899b1', 0.1),
+                            lineWidth: 1
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                        show: true,
+                        display: true,
+                        labelString: 'Return',
+                        fontColor: rgbaColor('#4899b1', 0.7),
+                        fontStyle: 600
+                        },
+                        ticks: {
+                            fontColor: rgbaColor('#4899b1', 0.7),
+                            fontStyle: 600
+                        },
+                        gridLines: {
+                            color: rgbaColor('#367385', 0.1),
+                            lineWidth: 1
+                        }
+                    }]
+                }       // Close Scales
+            }           // Close Options
+        }              // Close configEF
+
+        var optimal = {
     id: 'optimal',
     borderWidth: 5,
     data: optimalPfolio,
@@ -1103,7 +1122,21 @@ var min = {
     borderColor: rgbaColor('#ffd80a', 0.5),
     backgroundColor: rgbaColor('#ffd80a', 0.5)
 };
-$('#inefficient').on('click', function (e) {
+
+
+
+    })
+}
+
+
+
+
+
+
+
+
+
+/*docuemnt.select('#inefficient').on('click', function (e) {
     scatterChart.options.animation = false;
     if (e.target.checked == false) {
         var filtered = scatterChart.data.datasets.filter(function(value){
@@ -1134,6 +1167,4 @@ $('#spy').on('click', function (e) {
     }
 });
 
-
-
-
+*/

@@ -8,34 +8,14 @@
 """
 import pandas as pd
 import numpy as np
-
+import quandl as ql
+import random
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 
-'''
-Module: Data API Functions
-Created On: 2019-07-05              Last Modified: 2019-07-05
-**************************************************************************
-    **READ ME**
 
-    [Description]
-    Module Contains Custom Functions For The Below List of Registerd APIs and
-    Returning Specific Financial Data For The Specified Stock Symbol/Company
-
-    [Finance APIs]
-    SEC Edgar   Security Exchange Commission - Company Filings & Financial Disclosures
-                    -   Consolidated Financial Statements (JSON)
-                    -   Performance Ratios
-                    -   Insider Trades
-
-    Quandl      Stock Performance Data - Time Series Data
-                    -   Open, Low, High, Close, Volume, Ex-Dividend, Splits
-
-
-'''
-import quandl as ql
 #from apiconfig import quandl_api_key
 quandl_api_key = "oaVsrcUmaesTBfV8xxgi"
 
@@ -183,8 +163,8 @@ def optimize_portfolio(assets, simulations=5000):
 
 def simulate_portfolios(portfolio, simulations=1000):
     if type(portfolio) is pd.core.frame.DataFrame:
-        print(f'\nSimulating Portfolios... x {simulations}')
-
+        print(f'\nSimulating Portfolios... x {simulations}\n\n', flush=True)
+        print(portfolio.head(15), flush=True)
         # Monte Carlo Simulation
         assets = list(portfolio.columns)
         num_assets = len(assets)
@@ -255,63 +235,13 @@ def evaluate_portfolio(rtns):
     return rtns
 
 
-'''
-Category: Machine Learning Model Training
-
-Functions:
-    0.  setup_ml_training_data_db
-    1.  generate_random_portfolio
-    2.  compile_random_portfolio
-    2.  generate_ml_training_data
-    3.  update_ml_training_database
-
-Description:
-    General Utility Functions to Generate/Simulate Random Portflios Which Are Later
-    Used to Train our Neural Network Machine Learning Training Model. The ML Data
-    Generation Process Occurs Over Four Steps
-
-        1.  Initialize & Configure DB:
-                Using Python A MySQL/SQLite Database is Initialized and Configured
-                in Order to Store the Simulated Portfolio Data That is Generated
-                Which We Later Use to Train Our Machine Learning Model
-
-        2.  Generate Random Test Portfolios:
-                [Input]  Params: List of Stock Ticker Symbols
-                [Output] Return: DataFrame - 5 Year Historic Closing Prices
-
-                Randomly Selects Between 5-10 Stocks in Which to Include in the
-                Test Portfolio. Using API calls to Quandl (Database) it Pulls Historic
-                Closing Price Data For the Past 5 Years and Aggregates it w/
-                Associated Benchmark Performance into a DataFrame Which is Then
-                Returned as the Functions Output.
-
-        3.  Calculate Portfolio Statistics:
-                [Input]  Params: DataFrame of Portflio Closing Prices
-                [Output] Return: Dictionary Descriptive Portfolio Statistics
-
-                Using the Returned Output From the Previous Function, Step 3
-                Calculates the Following Portfolio Statistics:
-                    a.  Counts Number of Stocks
-                    b.  Portfolio Regresson Beta
-                    c.  Portfolio Expected Return
-                    d.  Portfolio Expected Variance
-                    e.  Portfolio Sharpe Ratio
-
-        4.  Update ML Training Database
-                [Input]  Params: List of Dictiories - Portfolio Stats
-                [Output] Return: None
-
-'''
-
-#   Random Test Portfolio Generation Function
-
-
 def generate_random_portfolio():
-    stocklist_df = pd.read_csv("StockTickers.csv")
-    stocklist = list(dict(stocklist_df)["Tickers"])
+    #stocklist_df = pd.read_csv("StockTickers.csv")
+    #stocklist = list(dict(stocklist_df)["Tickers"])
+    stocklist = "TXN,TSLA,DIS,CVX,AMZN,KO,CMCSA,WFC,PG,JPM,MSFT,BAC,C".split(",")
 
     random_portfolio = []
-    for i in range(random.randint(6, 10)):
+    while len(random_portfolio) != 3:
         add_stock = random.choice(stocklist)
         if add_stock not in random_portfolio:
             random_portfolio.append(add_stock)
@@ -456,13 +386,17 @@ def mod_sharpe_ratio(ERp, EVARp):
     return round((ERp - mkt_return) / EVARp, 4)
 
 
-db_config = {
-    'user': 'root',
-    'password': 'Tamamasheer0',
-    'mysql_db': 'localhost/stock_data'
-}
-connect = f'mysql://{db_config["user"]}:{db_config["password"]}@{db_config["mysql_db"]}'
-print(connect)
+# engine = create_engine(connect, echo=True)
+# Base = automap_base()
+# Base.prepare(engine, reflect=True)
+# session = Session(bind=True)
+# sql_qry = f'SELECT Date, AMZN, JPM \
+#             FROM stock_data.closing_prices;'
+
+# retval = engine.execute(sql_qry).fetchall()
+# print(pd.DataFrame(retval))
+
+
 '''##############################################################
     <Ben> Portfolio Optimizer (Scatter Chart Data)
     Chart: Efficient Frontier
@@ -471,36 +405,51 @@ print(connect)
     Req: {'x' & 'y'} Coordinate Pairings
 ###############################################################'''
 
-engine = create_engine(connect, echo=True)
-Base = automap_base()
-Base.prepare(engine, reflect=True)
-session = Session(bind=True)
 
-sql_qry = f'SELECT Date, AMZN, JPM \
-            FROM stock_data.closing_prices;'
-
-retval = engine.execute(sql_qry).fetchall()
-print(pd.DataFrame(retval))
-
-
-def efficient_frontier_data(stock_list):
-    #   Need Simulate Portfolio Function
-    engine = create_engine(connect, echo=True)
+def efficient_frontier_data(stock_list, db):
+    print(f'\nGenerating Efficient Frontier Portfolios...\n', flush=True)
+    engine = create_engine(db, echo=True)
     base = automap_base()
-    base.prepare(connect, reflect=True)
+    base.prepare(engine, reflect=True)
     session = Session(bind=engine)
 
+    stock_list.insert(0, "Date")
     qry_stocks = ",".join(stock_list)
-    sql_query = f'SELECT {stock_list} \
-                   FROM stock_data.closing_prices'
+    print(f"Stock List: {qry_stocks}", flush=True)
+    sql_query = f'SELECT {qry_stocks} \
+                  FROM stock_data.closing_prices'
+
+    print(f"SQL Query: \n{sql_query}\n\n", flush=True)
 
     qry_return = engine.execute(sql_query).fetchall()
 
-    stock_list.insert(0, "DATE")
+    # Print to Terminal
+    for i, row in enumerate(qry_return):
+        if (i % 10) == 0:
+            print(i, row)
+
+    print(stock_list, flush=True)
+
     stocks_df = pd.DataFrame(qry_return)
     stocks_df.columns = stock_list
-    stocks_df.set_index("DATE", inplace=True)
-    sim_portfolios = simulate_portfolios(query_df)
+    stocks_df.set_index("Date", inplace=True)
+    stocks_df = stocks_df.astype(float)
+    print(stocks_df.head(15), flush=True)
 
-    trace = {"EF": sim_portfolios}
-    return jsonify(trace)
+    sim_portfolios = simulate_portfolios(stocks_df)
+
+    scatter_data = []
+    for pfolio in sim_portfolios:
+        grouped = {
+            "x": pfolio["Variance"],
+            "y": pfolio["Return"]
+        }
+        scatter_data.append(grouped)
+    ef_data = {"EF": scatter_data}
+    return ef_data
+
+
+# assets = "JPM,MSFT,DIS".split(",")
+# print("Stock Picks: ", assets, flush=True)
+# json_data = efficient_frontier_data(stock_list=assets, mysql_conn=connect)
+# print(json_data)
