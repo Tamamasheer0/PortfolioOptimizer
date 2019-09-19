@@ -32,8 +32,6 @@ Created On: 2019-07-05              Last Modified: 2019-07-05
 
     Quandl      Stock Performance Data - Time Series Data
                     -   Open, Low, High, Close, Volume, Ex-Dividend, Splits
-
-
 '''
 import quandl as ql
 from apiconfig import quandl_api_key

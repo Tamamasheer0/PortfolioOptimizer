@@ -1,18 +1,20 @@
+console.log("<JavaScript | Charts> Volatility/Return Chart: Import Fn: Successful")
+
 function standardDeviation(values){
     var avg = average(values);
-    
+
     var squareDiffs = values.map(function(value){
       var diff = value - avg;
       var sqrDiff = diff * diff;
       return sqrDiff;
     });
-    
+
     var avgSquareDiff = average(squareDiffs);
-  
+
     var stdDev = Math.sqrt(avgSquareDiff);
     return stdDev;
   }
-  
+
 function average(data){
     var sum = data.reduce(function(sum, value){
         return sum + value;
@@ -116,14 +118,14 @@ function colorBar(data) {
 // -----
 
 function renderVOL() {
-    var vol = document.getElementById('vol');
+    var vol = document.getElementById('volatility-chart');
 
     function newChart(chart, config) {
         var ctx = chart.getContext('2d');
         return new window.Chart(ctx, config);
     };
 
-    var chartLine = document.getElementById('volChart');
+    var chartLine = document.getElementById('volatility-chart');
 
     var volChart = newChart(chartLine, {
         type: 'bar',
@@ -196,14 +198,14 @@ function renderVOL() {
 
 // -----
 
-    var rtn = document.getElementById('rtn');
+    var rtn = document.getElementById('return-chart');
 
     function newChart(chart, config) {
         var ctx = chart.getContext('2d');
         return new window.Chart(ctx, config);
     };
 
-    var chartLine = document.getElementById('rtnChart');
+    var chartLine = document.getElementById('return-chart');
 
     var rtnChart = newChart(chartLine, {
         type: 'line',
@@ -229,7 +231,7 @@ function renderVOL() {
                     fontStyle: 600,
                     padding: 20
                 },
-                onClick: 
+                onClick:
                     function(e, legendItem) {
                         let indexes = [0,1,2,3];
                         var ci = this.chart;
@@ -243,7 +245,7 @@ function renderVOL() {
                             for (value in indexes) {
                                 line0[value].borderColor = rgbaColor(colorsLine[line0[value].number], 0.8);
                                 line1[value].borderColor = rgbaColor(colorsLine[line1[value].number], 0.8);
-                                
+
                             }
                         }
                         for (value in filtered) {

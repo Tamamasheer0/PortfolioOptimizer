@@ -46,11 +46,11 @@
     <main class="main" id="top">
 
         <div class="container">
-            <div class="card mb-3">
-              <div class="card-body rounded-soft bg-gradient">
-                <div class="row text-white align-items-center no-gutters">
+            <div class="card bg-dark mb-3">
+              <div class="card-body rounded-soft bg-dark">
+                <div class="row text-secondary align-items-center no-gutters">
                   <div class="col">
-                    <h4 class="text-white mb-0">Efficient Frontier</h4>
+                    <h4 class="text-secondary mb-0">Efficient Frontier</h4>
                     <button class="btn" style='color: white; padding-bottom: 20px;' onclick='on0()'>more info ></button>
                   </div>
                   <div class="col-auto d-none d-sm-block" style='padding-bottom: 22px;'>
@@ -58,17 +58,17 @@
                         <input type="checkbox" checked="checked" id='inefficient'>
                         <span class="checkmark"></span>
                     </label>
-                      
+
                     <label class="container">Compare to S&P 500
                       <input type="checkbox" id='spy'>
                       <span class="checkmark"></span>
                     </label>
-    
+
                   </div>
                 </div>
                 <canvas class="rounded" id="scatterChart" width="1618" height="500"></canvas>
                 <div class='overlay' id='overlay0' onclick='off0()'>
-                  <div class='text'>Efficient Frontier: the set of optimal portfolios that offer the highest expected return for a defined level of risk 
+                  <div class='text'>Efficient Frontier: the set of optimal portfolios that offer the highest expected return for a defined level of risk
                     or the lowest risk for a given level of expected return<br><br>
                     Sharpe Ratio: the measure of Return over Volatility (Risk-Adjusted Return)<br><br>
                     Minimum Variance Portfolio: the portfolio with the lowest associated risk<br><br>
@@ -79,11 +79,11 @@
 
 
       <div class="container">
-          <div class="card mb-3">
-            <div class="card-body rounded-soft bg-gradient">
-              <div class="row text-white align-items-center no-gutters">
+          <div class="card bg-dark mb-3">
+            <div class="card-body bg-dark rounded-soft">
+              <div class="row text-secondary align-items-center no-gutters">
                 <div class="col">
-                  <h4 class="text-white mb-0">Return vs Volatility</h4>
+                  <h4 class="text-secondary mb-0">Return vs Volatility</h4>
                   <button class="btn" style='color: white; padding-bottom: 20px;' onclick='on1()'>more info ></button>
                 </div>
                 <div class="col-auto d-none d-sm-block" style='padding-bottom: 22px;'>
@@ -100,7 +100,7 @@
           </div>
         </div>
       </div>
-        
+
     <!-- ===============================================-->
     <!--    JavaScripts-->
     <!-- ===============================================-->

@@ -316,15 +316,7 @@ function renderVOL() {
 
 var linkedData = []
 
-window.onload = function(){
-    var defaultURL = "/defaultVol"
-    d3.json(defaultURL).then(function(data){
-    console.log("[Flask Route | JavaScript] Query Volatility Data")
-    console.log(data)
-
-});
-    renderVOL();
-}
+window.onload = renderVOL()
 
 function off1() {
     document.getElementById('overlay1').style.display = 'none';
